@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <script type="text/javascript" src="/js/ComponentLoader.js"></script>
+        <script type="text/javascript" src="/components/List.js"></script>
+        <script type="text/javascript" src="/components/ListItem.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript" src="/js/GlobalEventListeners.js"></script>
+        <div class="" id="main">
+            <div class="" id="listOfItems">
+
+            </div>
+        </div>
+        <script type="text/javascript">
+        let listData = {
+            childrenData: [
+                {title:'Good Morning'},
+                {title:'Good Evening'}
+            ]
+        };
+        let listOfItems = new List(listData);
+        document.querySelector('#listOfItems').innerHTML = listOfItems.render();
+        </script>
+    </body>
+</html>
