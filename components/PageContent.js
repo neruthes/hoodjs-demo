@@ -1,0 +1,1 @@
+// Hood.define('test.PageContent', {});

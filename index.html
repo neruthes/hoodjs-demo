@@ -8,19 +8,68 @@
         <script type="text/javascript" src="/js/Hood.js"></script>
         <script type="text/javascript" src="/dist/all_components.js"></script>
         <div class="" id="main">
+            <div class="" id="globalNavBar">
+            </div>
+            <div class="" id="contentArea">
+            </div>
             <div class="" id="listOfItems">
-
             </div>
         </div>
         <script type="text/javascript">
-        let listData = {
-            childrenData: [
-                {title:'Good Morning'},
-                {title:'Good Evening'}
+        const app = {};
+        app.tabs = {
+            // nginx: 
+        };
+        app.setActiveTab = function (tabId) {
+            // Arguments:
+            //      tabId <= [ nginx, tinc ]
+            // We only have Nginx for now
+            if (tabId === 'nginx') {
+                document.querySelector('#contentArea').innerHTML = `
+                    <div id="leftPanel">
+                    </div>
+                    <div id="rightPanel">
+                    </div>
+                `;
+                window.nginxPageData = {
+                    instances: [
+                        { title: 'github.com', id: 2001, isActive: true },
+                        { title: 'vercel.app', id: 2002, isActive: false },
+                        { title: 'gitee.io', id: 2003, isActive: false },
+                    ]
+                };
+                let listOfItems = Hood.create('test.Nginx.List', nginxPageData);
+                document.querySelector('#leftPanel').innerHTML = listOfItems.render();
+            };
+            // Render to the canvas, finally
+            // document.querySelector('#contentArea').innerHTML = '';
+        };
+        app.setActiveNginxInstance = function (id) {
+            let activeInstanceDefPtr = null;
+            nginxPageData.instances.map(function (itDefPtr) {
+                if (itDefPtr.id === id) {
+                    window.panelEntity = Hood.create('test.Nginx.DetailPanel', itDefPtr);
+                    document.querySelector('#rightPanel').innerHTML = panelEntity.render();
+                };
+            });
+        };
+        </script>
+        <script type="text/javascript">
+        // NavBar
+        let globalNavBarData = {
+            tabs: [
+                { title:'Nginx', id:'nginx', isActive: true },
+                { title:'Tinc', id:'tinc', isActive: false }
             ]
         };
-        let listOfItems = Hood.create('test.List', listData);
-        document.querySelector('#listOfItems').innerHTML = listOfItems.render();
+        let globalNavBarHood = Hood.create('test.NavBar', globalNavBarData);
+        document.querySelector('#globalNavBar').innerHTML = globalNavBarHood.render();
+        
+        
+        // Init app
+        app.setActiveTab('nginx');
+        app.setActiveNginxInstance(2001);
         </script>
     </body>
-</html>
+    </html>
+    
