@@ -1,23 +1,16 @@
-const List = function (argv) {
-    this.argv = argv;
-    RegisterComponentInstance(this);
-};
-
-List.prototype.render = function () {
-    return `<div ce-uuid="${this.uuid}">
-        <div>${this.renderChildren()}</div>
-    </div>`;
-};
-List.prototype.renderChildren = function () {
-    return this.argv.childrenData.map(function (item, i) {
-        let newItem = item;
-        newItem.parent = listOfItems;
-        newItem.index = i;
-        let itemObj = new ListItem(item);
-        return itemObj.render();
-    }).join('');
-};
-List.prototype.childShift = function (childPtr) {
-    this.argv.childrenData[childPtr.index].title = childPtr.title;
-    console.log(`child title updated: ${this.argv.childrenData[childPtr.index].title}`);
-};
+Hood.define('test.List', {
+    render: function () {
+        return `<div hood-fd="${this.__fd}">
+            <div>${this.renderChildren()}</div>
+        </div>`;
+    },
+    methods: {
+        renderChildren: function () {
+            return this._src.childrenData.map(function (itemData) {
+                itemData.__parentFd = this.__fd; // `this` is the List instance
+                let niptr = Hood.create('test.ListItem', itemData);
+                return niptr.render();
+            }).join('');
+        }
+    }
+});
