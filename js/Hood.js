@@ -66,9 +66,27 @@ Hood.spawn = function (componentClassName, src, ownerFd) {
     return ni;
 };
 
+// Rebind new data to existing instance
+Hood.rebind = function (fd, src, options) {
+    Hood._registeredInstances[fd]._src = src;
+    if (options) {
+        if (options.reinit) {
+            Hood.call(fd, 'init');
+        };
+    };
+};
+
 // Call method of instance by fd and methodName
 Hood.call = function (fd, methodName, argv) {
     return Hood._registeredInstances[fd][methodName](argv);
+};
+
+// Get and set state of instance by fd and stateName
+Hood.getState = function (fd, stateName) {
+    return Hood._registeredInstances[fd]._states[stateName];
+};
+Hood.setState = function (fd, stateName, newValue) {
+    Hood._registeredInstances[fd]._states[stateName] = newValue;
 };
 
 // =================================

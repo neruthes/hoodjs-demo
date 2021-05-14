@@ -5,6 +5,7 @@ Hood.define('test.Button', {
             ${this._src.text}
         </button>`;
     },
+    states: {},
     methods: {
         click: function (ev) {
             Hood.call(this._ownerFd, 'childButtonClick', {

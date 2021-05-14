@@ -5,6 +5,7 @@ Hood.define('test.Button', {
             ${this._src.text}
         </button>`;
     },
+    states: {},
     methods: {
         click: function (ev) {
             Hood.call(this._ownerFd, 'childButtonClick', {
@@ -84,6 +85,7 @@ Hood.define('test.NavBar.Tab', {
             ${this._src.title}
         </div>`
     },
+    states: {},
     methods: {
         click: function (ev) {
             let _this = this;
@@ -94,9 +96,43 @@ Hood.define('test.NavBar.Tab', {
         }
     }
 });
-// Hood.define('test.PageContent', {});
-Hood.define('test.Nginx.List', {
+Hood.define('test.Content.Nginx', {
     init: function () {
+        let _this = this;
+        let listEntity = Hood.spawn('test.Content.Nginx.List', _this._src, _this.__fd);
+        _this.listEntityFd = listEntity.__fd;
+        let detailEntity = Hood.spawn(
+            'test.Content.Nginx.DetailPanel',
+            _this._src.instances.filter(item => item.id === Hood.getState(_this.listEntityFd, 'activeInstance'))[0],
+            _this.__fd
+        );
+        _this.detailEntityFd = detailEntity.__fd;
+        return 0;
+    },
+    render: function () {
+        let _this = this;
+        return `<div hood-fd="${_this.__fd}">
+            ${Hood.call(_this.listEntityFd, 'render')}
+            ${Hood.call(_this.detailEntityFd, 'render')}
+        </div>`;
+    },
+    states: {},
+    methods: {
+        tabClick: function (argv) {
+            let _this = this;
+            Hood.rebind(
+                _this.detailEntityFd,
+                _this._src.instances.filter(item => item.id === Hood.getState(_this.listEntityFd, 'activeInstance'))[0]
+            );
+            Hood.call(_this.detailEntityFd, '_rerender');
+        }
+    }
+});
+
+Hood.define('test.Content.Nginx.List', {
+    init: function () {
+        let _this = this;
+        _this._states.activeInstance = _this._src.instances[0].id;
         return 0;
     },
     render: function () {
@@ -111,7 +147,6 @@ Hood.define('test.Nginx.List', {
             width: 280px; height: 100vh;
             padding: 90px 0 0;
         ">
-            
             <div style="">${this.renderChildren()}</div>
         </div>`;
     },
@@ -123,14 +158,14 @@ Hood.define('test.Nginx.List', {
         renderChildren: function () {
             let _this = this;
             return _this._src.instances.map(function (itemData) {
-                let niptr = Hood.spawn('test.Nginx.ListItem', itemData, _this.__fd);
+                let niptr = Hood.spawn('test.Content.Nginx.ListItem', itemData, _this.__fd);
                 return niptr.render();
             }).join('');
         },
         tabClick: function (argv) {
             let _this = this;
             // argv.instanceId
-            console.log(`clicked argv.instanceId: ${argv.instanceId}`);
+            // console.log(`clicked argv.instanceId: ${argv.instanceId}`);
             _this._states.activeInstance = argv.instanceId;
             _this._src.instances.forEach(function (instanceDefPtr) {
                 if (instanceDefPtr.id === _this._states.activeInstance) {
@@ -141,17 +176,16 @@ Hood.define('test.Nginx.List', {
             });
             _this._rerender();
             _this._src.currentActive = _this._states.activeInstance;
-            app.setActiveNginxInstance(_this._states.activeInstance);
+            // app.setActiveNginxInstance(_this._states.activeInstance);
+            Hood.call(_this._ownerFd, 'tabClick', {
+                instanceId: argv.instanceId
+            });
         }
     }
 });
 
-Hood.define('test.Nginx.ListItem', {
+Hood.define('test.Content.Nginx.ListItem', {
     init: function () {
-        // this._btnPtr = Hood.spawn('test.Button', {
-            // text: `Shift`,
-            // masterMethod: 'shift'
-        // }, this.__fd);
     },
     render: function () {
         return `<div hood-fd="${this.__fd}" hood-method="click" style="
@@ -166,6 +200,7 @@ Hood.define('test.Nginx.ListItem', {
             </div>
         </div>`;
     },
+    states: {},
     methods: {
         click: function (ev) {
             let _this = this;
@@ -177,7 +212,7 @@ Hood.define('test.Nginx.ListItem', {
     }
 });
 
-Hood.define('test.Nginx.DetailPanel', {
+Hood.define('test.Content.Nginx.DetailPanel', {
     init: function () {
     },
     render: function () {
@@ -194,13 +229,7 @@ Hood.define('test.Nginx.DetailPanel', {
             </div>
         </div>`;
     },
+    states: {},
     methods: {
-        click: function (ev) {
-            let _this = this;
-            Hood.call(this._ownerFd, 'tabClick', {
-                rawEvent: ev,
-                instanceId: _this._src.id
-            });
-        }
     }
 });

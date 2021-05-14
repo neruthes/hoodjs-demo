@@ -68,6 +68,7 @@ Hood.define('test.NavBar.Tab', {
             ${this._src.title}
         </div>`
     },
+    states: {},
     methods: {
         click: function (ev) {
             let _this = this;
