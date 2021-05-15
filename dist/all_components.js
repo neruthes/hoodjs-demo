@@ -21,11 +21,13 @@ Hood.define('test.InputGroup.Text', {
     render: function () {
         let _this = this;
         _this._states.value = Hood.getSrcData(_this._ownerFd, _this._src.fieldName);
-        return `<div hood-fd="${_this.__fd}">
-            <label>${_this._src.label}</label>
-            <input hood-ev="input focus blur" type="text" placeholder="${_this._src.placeholder}" value="${
-                Hood.getSrcData(_this._ownerFd, _this._src.tmpValFieldName)
-            }" />
+        return `<div hood-fd="${_this.__fd}" style="${this._src.style.group}">
+            <label style="${this._src.style.label}">${_this._src.label}</label>
+            <input hood-ev="input focus blur" type="text"
+                placeholder="${_this._src.placeholder}"
+                value="${Hood.getSrcData(_this._ownerFd, _this._src.tmpValFieldName)}"
+                style="${this._src.style.input}"
+            />
         </div>`;
     },
     states: {
@@ -250,11 +252,17 @@ Hood.define('test.Content.Nginx.ListItem', {
 Hood.define('test.Content.Nginx.DetailPanel', {
     init: function () {
         let _this = this;
+        let commonStyles = {
+            group: `margin: 0 0 15px;`,
+            label: `font-size: 18px; display: inline-block; width: 130px; margin: 0 20px 0 0;`,
+            input: `font-size: 18px; padding: 4px 3px;`,
+        }
         let inputGroupEntity_title = Hood.spawn('test.InputGroup.Text', {
             label: 'Title',
             placeholder: 'Site Title',
             fieldName: 'title',
             tmpValFieldName: 'draft_title',
+            style: commonStyles,
             on_input: 'on_input_any'
         }, _this.__fd);
         let inputGroupEntity_domain = Hood.spawn('test.InputGroup.Text', {
@@ -262,6 +270,7 @@ Hood.define('test.Content.Nginx.DetailPanel', {
             placeholder: 'example.com',
             fieldName: 'domain',
             tmpValFieldName: 'draft_domain',
+            style: commonStyles,
             on_input: 'on_input_any'
         }, _this.__fd);
         let inputGroupEntity_button = Hood.spawn('test.Button', {

@@ -121,8 +121,8 @@ Hood.define('test.Content.Nginx.DetailPanel', {
     init: function () {
         let _this = this;
         let commonStyles = {
-            group: ``,
-            label: `font-size: 18px; width: 130px; margin: 0 20px 0 0;`,
+            group: `margin: 0 0 15px;`,
+            label: `font-size: 18px; display: inline-block; width: 130px; margin: 0 20px 0 0;`,
             input: `font-size: 18px; padding: 4px 3px;`,
         }
         let inputGroupEntity_title = Hood.spawn('test.InputGroup.Text', {
@@ -130,6 +130,7 @@ Hood.define('test.Content.Nginx.DetailPanel', {
             placeholder: 'Site Title',
             fieldName: 'title',
             tmpValFieldName: 'draft_title',
+            style: commonStyles,
             on_input: 'on_input_any'
         }, _this.__fd);
         let inputGroupEntity_domain = Hood.spawn('test.InputGroup.Text', {
@@ -137,6 +138,7 @@ Hood.define('test.Content.Nginx.DetailPanel', {
             placeholder: 'example.com',
             fieldName: 'domain',
             tmpValFieldName: 'draft_domain',
+            style: commonStyles,
             on_input: 'on_input_any'
         }, _this.__fd);
         let inputGroupEntity_button = Hood.spawn('test.Button', {
