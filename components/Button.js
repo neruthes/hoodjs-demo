@@ -1,5 +1,5 @@
 Hood.define('test.Button', {
-    init: function () {},
+    init: function () { },
     render: function () {
         return `<button hood-fd="${this.__fd}" hood-method="click">
             ${this._src.text}
@@ -7,10 +7,11 @@ Hood.define('test.Button', {
     },
     states: {},
     methods: {
-        click: function (ev) {
-            Hood.call(this._ownerFd, 'childButtonClick', {
-                rawEvent: ev,
-                masterMethod: this._src.masterMethod
+        click: function (argv) {
+            console.log(`button instance event`);
+            console.log(argv.ev);
+            Hood.call(this._ownerFd, this._src.on_click, {
+                ev: argv.ev
             });
         }
     }

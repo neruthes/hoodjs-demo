@@ -27,12 +27,12 @@
             if (tabId === 'nginx') {
                 window.nginxPageData = {
                     instances: [
-                        { title: 'github.com', id: 2001, isActive: true },
-                        { title: 'vercel.app', id: 2002, isActive: false },
-                        { title: 'gitee.io', id: 2003, isActive: false },
+                        { title: 'GitHub', draft_title: 'GitHub', domain: 'github.com', draft_domain: 'github.com', id: 2001, isActive: true },
+                        { title: 'Amazon', draft_title: 'Amazon', domain: 'amazon.com', draft_domain: 'amazon.com', id: 2002, isActive: false },
+                        { title: 'Twitter', draft_title: 'Twitter', domain: 'twitter.com', draft_domain: 'twitter.com', id: 2003, isActive: false },
                     ]
                 };
-                let pageContentViewEnt = Hood.create('test.Content.Nginx', nginxPageData);
+                window.pageContentViewEnt = Hood.create('test.Content.Nginx', nginxPageData);
                 document.querySelector('#contentArea').innerHTML = pageContentViewEnt.render();
                 // let listOfItems = Hood.create('test.Content.Nginx.List', nginxPageData);
                 //  `

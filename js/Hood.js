@@ -5,7 +5,6 @@
 const Hood = {
     _definedComponents: {},
     _registeredInstances: {},
-    _fdCgroupTree: {}, // {222: [333,444]} means that 333 and 444 depend on 222 and should be destroyed when 222 is destroyed
     _registryHeap: 100,
     internal: {
         registerInstance: function (instancePtr) {
@@ -13,6 +12,33 @@ const Hood = {
             instancePtr.__fd = Hood._registryHeap;
             Hood._registeredInstances[Hood._registryHeap] = instancePtr;
             return Hood._registryHeap;
+        },
+        searchUpRecursively: function (target, attrList) {
+            // target <HTMLElement>: Search since which element
+            // attrList <Array>: List of attributes
+            let resultObj = {};
+            let resultObj_foundFlag = {};
+            let targetPtr = target;
+            attrList.map(function (attr) {
+                resultObj[attr] = null;
+                resultObj_foundFlag[attr] = false;
+            });
+            for (let i = 0; i < 99; i++) {
+                attrList.map(function (attr) {
+                    if (resultObj_foundFlag[attr] === false && targetPtr.getAttribute(attr)) {
+                        resultObj[attr] = targetPtr.getAttribute(attr);
+                        resultObj_foundFlag[attr] = true;
+                    };
+                });
+                if (targetPtr.parentElement) {
+                    console.log(`Attempt ${i} did not match enough`);
+                    targetPtr = targetPtr.parentElement;
+                } else {
+                    return resultObj;
+                };
+            };
+            console.error(`[ERROR] Exhausted all 99 attempts when searching attributes.`);
+            return resultObj;
         }
     }
 };
@@ -89,6 +115,15 @@ Hood.setState = function (fd, stateName, newValue) {
     Hood._registeredInstances[fd]._states[stateName] = newValue;
 };
 
+// Get and set state of instance by fd and dataKey
+Hood.getSrcData = function (fd, dataKey) {
+    console.log(`Hood.getSrcData fd=${fd} dataKey=${dataKey}`);
+    return Hood._registeredInstances[fd]._src[dataKey];
+};
+Hood.setSrcData = function (fd, dataKey, newValue) {
+    Hood._registeredInstances[fd]._src[dataKey] = newValue;
+};
+
 // =================================
 // Event Handling
 // =================================
@@ -129,9 +164,31 @@ document.body.addEventListener('click', function (e) {
     })(rawOpts);
     if (!opts.isFalsePositive) {
         // let self = Hood._registeredInstances[opts.instanceFileDescriptor];
-        Hood._registeredInstances[opts.instanceFileDescriptor][opts.methodName]();
+        console.log(`raw click event capture`);
+        console.log(`opts.methodName ${opts.methodName}`);
+        console.log(e);
+        Hood._registeredInstances[opts.instanceFileDescriptor][opts.methodName]({
+            ev: e
+        });
     } else {
         // e.preventDefault();
         // e.stopPropagation();
     };
 });
+
+document.body.addEventListener('input', function (e) {
+    let rawTarget = e.target;
+    console.log(`rawTarget`);
+    console.log(rawTarget);
+    if (rawTarget.getAttribute('hood-ev').split(' ').indexOf('input') !== -1) {
+        // The input event should be listened
+        // Find fd recursively and call its on_input method
+        let resultObj = Hood.internal.searchUpRecursively(rawTarget, ['hood-fd']);
+        console.log('resultObj');
+        console.log(resultObj);
+        Hood.call(parseInt(resultObj['hood-fd']), 'on_input', {
+            ev: e
+        });
+    };
+});
+

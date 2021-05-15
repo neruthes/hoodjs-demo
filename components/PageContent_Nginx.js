@@ -13,6 +13,8 @@ Hood.define('test.Content.Nginx', {
     },
     render: function () {
         let _this = this;
+        console.log(`test.Content.Nginx render !`);
+        console.log(_this.detailEntityFd);
         return `<div hood-fd="${_this.__fd}">
             ${Hood.call(_this.listEntityFd, 'render')}
             ${Hood.call(_this.detailEntityFd, 'render')}
@@ -98,7 +100,8 @@ Hood.define('test.Content.Nginx.ListItem', {
             padding: 12px 12px;
         ">
             <div>
-                <div>${this._src.title}</div>
+                <div style="font-size: 22px;">${this._src.title}</div>
+                <div style="font-size: 14px;">${this._src.domain}</div>
             </div>
         </div>`;
     },
@@ -116,6 +119,30 @@ Hood.define('test.Content.Nginx.ListItem', {
 
 Hood.define('test.Content.Nginx.DetailPanel', {
     init: function () {
+        let _this = this;
+        let inputGroupEntity_title = Hood.spawn('test.InputGroup.Text', {
+            label: 'Title',
+            placeholder: 'Site Title',
+            fieldName: 'title',
+            tmpValFieldName: 'draft_title',
+            on_input: 'on_input_any'
+        }, _this.__fd);
+        let inputGroupEntity_domain = Hood.spawn('test.InputGroup.Text', {
+            label: 'Domain',
+            placeholder: 'example.com',
+            fieldName: 'domain',
+            tmpValFieldName: 'draft_domain',
+            on_input: 'on_input_any'
+        }, _this.__fd);
+        let inputGroupEntity_button = Hood.spawn('test.Button', {
+            text: 'Save',
+            on_click: 'saveBtnClick'
+        }, _this.__fd);
+        _this.formfd_title = inputGroupEntity_title.__fd;
+        _this.formfd_domain = inputGroupEntity_domain.__fd;
+        _this.formfd_saveBtn = inputGroupEntity_button.__fd;
+        _this._src.draft_title = _this._src.title.slice(0);
+        _this._src.draft_domain = _this._src.domain.slice(0);
     },
     render: function () {
         return `<div hood-fd="${this.__fd}" style="
@@ -129,9 +156,35 @@ Hood.define('test.Content.Nginx.DetailPanel', {
             <div>
                 <h2>Instance Name: ${this._src.title}</h2>
             </div>
+            <div>
+                ${Hood.call(this.formfd_title, 'render')}
+                ${Hood.call(this.formfd_domain, 'render')}
+                ${Hood.call(this.formfd_saveBtn, 'render')}
+            </div>
         </div>`;
     },
     states: {},
     methods: {
+        on_input_title: function (argv) {
+            console.log(`Input! on_input_title`);
+            console.log(argv);
+            this._src.draft_title = Hood.getState(this.formfd_title, 'value');
+        },
+        on_input_any: function (argv) {
+            console.log(`Input! on_input_any`);
+            console.log(argv);
+            this._src['draft_' + argv.fieldName] = Hood.getState(argv.fd, 'value');
+        },
+        saveBtnClick: function (argv) {
+            console.log(`Clicked save button`);
+            console.log('this._src.draft_title');
+            console.log(this._src.draft_title);
+            this._src.title = this._src.draft_title;
+            this._src.domain = this._src.draft_domain;
+            Hood.call(this._ownerFd, '_rerender');
+            // console.log(argv.ev.target);
+            // Hood.getState
+            // alert()
+        }
     }
 });
