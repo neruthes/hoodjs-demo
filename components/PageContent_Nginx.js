@@ -120,6 +120,11 @@ Hood.define('test.Content.Nginx.ListItem', {
 Hood.define('test.Content.Nginx.DetailPanel', {
     init: function () {
         let _this = this;
+        let commonStyles = {
+            group: ``,
+            label: `font-size: 18px; width: 130px; margin: 0 20px 0 0;`,
+            input: `font-size: 18px; padding: 4px 3px;`,
+        }
         let inputGroupEntity_title = Hood.spawn('test.InputGroup.Text', {
             label: 'Title',
             placeholder: 'Site Title',
