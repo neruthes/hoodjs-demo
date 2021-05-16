@@ -45,6 +45,7 @@ Hood.define('test.DashboardMain', {
         },
         setNginxData: function () {},
         setTincData: function () {},
+        on_click: function () {}
     }
 });
 

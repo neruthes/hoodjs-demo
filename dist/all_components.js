@@ -63,6 +63,7 @@ Hood.define('test.DashboardMain', {
         },
         setNginxData: function () {},
         setTincData: function () {},
+        on_click: function () {}
     }
 });
 
@@ -81,12 +82,12 @@ Hood.define('test.InputGroup.Text', {
         _this._states.value = Hood.getSrcData(_this._ownerFd, _this._src.fieldName);
         return `<div hood-fd="${_this.__fd}" style="${this._src.style.group}">
             <label style="${this._src.style.label}">${_this._src.label}</label>
-            <input hood-ev="input focus blur" type="text"
+            <input hood-ev="input" type="text"
                 placeholder="${_this._src.placeholder}"
                 value="${Hood.getSrcData(_this._ownerFd, _this._src.tmpValFieldName)}"
                 style="${this._src.style.input}"
-                onfocus="Hood.call(${_this.__fd}, 'on_focus')"
-                onblur="Hood.call(${_this.__fd}, 'on_blur')"
+                onfocus="Hood.call(${_this.__fd}, 'on_focus', arguments[0])"
+                onblur="Hood.call(${_this.__fd}, 'on_blur', arguments[0])"
             />
         </div>`;
     },
@@ -98,8 +99,6 @@ Hood.define('test.InputGroup.Text', {
             return document.querySelector(`[hood-fd="${this.__fd}"] > input`).value;
         },
         on_input: function (argv) {
-            console.log(`test.InputGroup.Text - on_input`);
-            console.log(argv.ev.target.value);
             this._states.value = argv.ev.target.value;
             Hood.call(this._ownerFd, this._src.on_input, {
                 ev: argv.ev,
@@ -108,7 +107,6 @@ Hood.define('test.InputGroup.Text', {
             });
         },
         on_focus: function (ev) {
-            console.log('input_extra_focus');
             document.querySelector(`[hood-fd="${this.__fd}"] > input`).style = this._src.style.input + this._src.style.input_extra_focus;
             Hood.call(this._ownerFd, 'childInputOnFocus', {
                 ev: ev,
@@ -259,8 +257,7 @@ Hood.define('test.Content.Nginx.List', {
         </div>`;
     },
     states: {
-        activeInstance: null
-        // instanceId
+        activeInstance: null // instanceId, <Number>
     },
     methods: {
         renderChildren: function () {
@@ -273,7 +270,6 @@ Hood.define('test.Content.Nginx.List', {
         tabClick: function (argv) {
             let _this = this;
             // argv.instanceId
-            // console.log(`clicked argv.instanceId: ${argv.instanceId}`);
             _this._states.activeInstance = argv.instanceId;
             _this._src.instances.forEach(function (instanceDefPtr) {
                 if (instanceDefPtr.id === _this._states.activeInstance) {
@@ -284,7 +280,6 @@ Hood.define('test.Content.Nginx.List', {
             });
             _this._rerender();
             _this._src.currentActive = _this._states.activeInstance;
-            // app.setActiveNginxInstance(_this._states.activeInstance);
             Hood.call(_this._ownerFd, 'tabClick', {
                 instanceId: argv.instanceId
             });
@@ -378,33 +373,21 @@ Hood.define('test.Content.Nginx.DetailPanel', {
     states: {},
     methods: {
         on_input_title: function (argv) {
-            console.log(`Input! on_input_title`);
-            console.log(argv);
+            // TODO: Should be removed
             this._src.draft_title = Hood.getState(this.formfd_title, 'value');
         },
         on_input_any: function (argv) {
-            console.log(`Input! on_input_any`);
-            console.log(argv);
             this._src['draft_' + argv.fieldName] = Hood.getState(argv.fd, 'value');
         },
         saveBtnClick: function (argv) {
-            console.log(`Clicked save button`);
-            console.log('this._src.draft_title');
-            console.log(this._src.draft_title);
             this._src.title = this._src.draft_title;
             this._src.domain = this._src.draft_domain;
             Hood.call(this._ownerFd, '_rerender');
-            // console.log(argv.ev.target);
-            // Hood.getState
-            // alert()
         },
         childInputOnFocus: function (argv) {
-            console.log(`childInputOnFocus`);
-            console.log(argv);
         },
         childInputOnBlur: function (argv) {
-            console.log(`childInputOnBlur`);
-            console.log(argv);
-        }
+        },
+        on_click: function (argv) {}
     }
 });

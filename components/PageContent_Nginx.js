@@ -53,8 +53,7 @@ Hood.define('test.Content.Nginx.List', {
         </div>`;
     },
     states: {
-        activeInstance: null
-        // instanceId
+        activeInstance: null // instanceId, <Number>
     },
     methods: {
         renderChildren: function () {
@@ -67,7 +66,6 @@ Hood.define('test.Content.Nginx.List', {
         tabClick: function (argv) {
             let _this = this;
             // argv.instanceId
-            // console.log(`clicked argv.instanceId: ${argv.instanceId}`);
             _this._states.activeInstance = argv.instanceId;
             _this._src.instances.forEach(function (instanceDefPtr) {
                 if (instanceDefPtr.id === _this._states.activeInstance) {
@@ -78,7 +76,6 @@ Hood.define('test.Content.Nginx.List', {
             });
             _this._rerender();
             _this._src.currentActive = _this._states.activeInstance;
-            // app.setActiveNginxInstance(_this._states.activeInstance);
             Hood.call(_this._ownerFd, 'tabClick', {
                 instanceId: argv.instanceId
             });
@@ -172,33 +169,21 @@ Hood.define('test.Content.Nginx.DetailPanel', {
     states: {},
     methods: {
         on_input_title: function (argv) {
-            console.log(`Input! on_input_title`);
-            console.log(argv);
+            // TODO: Should be removed
             this._src.draft_title = Hood.getState(this.formfd_title, 'value');
         },
         on_input_any: function (argv) {
-            console.log(`Input! on_input_any`);
-            console.log(argv);
             this._src['draft_' + argv.fieldName] = Hood.getState(argv.fd, 'value');
         },
         saveBtnClick: function (argv) {
-            console.log(`Clicked save button`);
-            console.log('this._src.draft_title');
-            console.log(this._src.draft_title);
             this._src.title = this._src.draft_title;
             this._src.domain = this._src.draft_domain;
             Hood.call(this._ownerFd, '_rerender');
-            // console.log(argv.ev.target);
-            // Hood.getState
-            // alert()
         },
         childInputOnFocus: function (argv) {
-            console.log(`childInputOnFocus`);
-            console.log(argv);
         },
         childInputOnBlur: function (argv) {
-            console.log(`childInputOnBlur`);
-            console.log(argv);
-        }
+        },
+        on_click: function (argv) {}
     }
 });

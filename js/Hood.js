@@ -30,8 +30,11 @@ const Hood = {
                         resultObj_foundFlag[attr] = true;
                     };
                 });
+                // if (attrList.filter(x => resultObj_foundFlag[x]).length === attrList.length) {
+                    // return resultObj;
+                // };
                 if (targetPtr.parentElement) {
-                    console.log(`Attempt ${i} did not match enough`);
+                    // console.log(`Attempt ${i} did not match enough`);
                     targetPtr = targetPtr.parentElement;
                 } else {
                     return resultObj;
@@ -105,7 +108,12 @@ Hood.rebind = function (fd, src, options) {
 
 // Call method of instance by fd and methodName
 Hood.call = function (fd, methodName, argv) {
-    return Hood._registeredInstances[fd][methodName](argv);
+    let theFunction = Hood._registeredInstances[fd][methodName];
+    if (theFunction) {
+        return theFunction.call(Hood._registeredInstances[fd], argv);
+    } else {
+        return undefined;
+    };
 };
 
 // Get and set state of instance by fd and stateName
@@ -118,7 +126,6 @@ Hood.setState = function (fd, stateName, newValue) {
 
 // Get and set state of instance by fd and dataKey
 Hood.getSrcData = function (fd, dataKey) {
-    console.log(`Hood.getSrcData fd=${fd} dataKey=${dataKey}`);
     return Hood._registeredInstances[fd]._src[dataKey];
 };
 Hood.setSrcData = function (fd, dataKey, newValue) {
@@ -129,14 +136,10 @@ Hood.setSrcData = function (fd, dataKey, newValue) {
 // Event Handling
 // =================================
 Hood.internal.generateRawEventHandler = function (evName) {
-    console.log(`hello???`);
     return function (e) {
-        console.log(`evName: ${evName}`);
         let rawTarget = e.target;
-        console.log(`rawTarget`);
-        console.log(rawTarget);
         let searchQuery = Hood.internal.searchUpRecursively(rawTarget, ['hood-ev']);
-        if (searchQuery.isFalsePositive) {
+        if (searchQuery.isFalsePositive || searchQuery['hood-ev'] === null) {
             console.log(`False positive click!`);
         } else {
             // Can find someone with 'hood-ev' attribute in the parent chain of rawTarget
@@ -154,4 +157,3 @@ Hood.internal.generateRawEventHandler = function (evName) {
 document.body.addEventListener('input', Hood.internal.generateRawEventHandler('input'));
 document.body.addEventListener('click', Hood.internal.generateRawEventHandler('click'));
 // NOTE: Focus & Blur cannot be bubbled so they are captured in other ways
-
