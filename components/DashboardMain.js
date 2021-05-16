@@ -53,6 +53,6 @@ Hood.define('test.Content.Tinc', {
     render: function () {
         return `<div hood-fd="${this.__fd}" style="padding: 100px 20px 0;">Not Implemented Yet</div>`;
     },
-    states: {},
-    methods: {}
+    states: { },
+    methods: { }
 });
