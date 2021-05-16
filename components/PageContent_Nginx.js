@@ -13,8 +13,6 @@ Hood.define('test.Content.Nginx', {
     },
     render: function () {
         let _this = this;
-        console.log(`test.Content.Nginx render !`);
-        console.log(_this.detailEntityFd);
         return `<div hood-fd="${_this.__fd}">
             ${Hood.call(_this.listEntityFd, 'render')}
             ${Hood.call(_this.detailEntityFd, 'render')}
