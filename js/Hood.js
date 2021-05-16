@@ -153,5 +153,5 @@ Hood.internal.generateRawEventHandler = function (evName) {
 };
 document.body.addEventListener('input', Hood.internal.generateRawEventHandler('input'));
 document.body.addEventListener('click', Hood.internal.generateRawEventHandler('click'));
-document.body.addEventListener('focus', Hood.internal.generateRawEventHandler('focus')); // TODO: Focus events do not bubble up
+// NOTE: Focus & Blur cannot be bubbled so they are captured in other ways
 
