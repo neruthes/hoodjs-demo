@@ -8,8 +8,6 @@ Hood.define('test.Button', {
     states: {},
     methods: {
         on_click: function (argv) {
-            console.log(`button instance event`);
-            console.log(argv.ev);
             Hood.call(this._ownerFd, this._src.on_click, {
                 ev: argv.ev
             });

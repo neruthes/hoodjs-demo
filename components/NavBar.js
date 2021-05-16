@@ -39,7 +39,6 @@ Hood.define('test.NavBar', {
         },
         tabClick: function (argv) {
             let _this = this;
-            console.log(`clicked argv.tabId: ${argv.tabId}`);
             _this._states.activeTab = argv.tabId;
             _this._src.tabs.forEach(function (tabDefPtr) {
                 if (tabDefPtr.id === _this._states.activeTab) {
