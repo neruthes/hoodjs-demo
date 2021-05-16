@@ -35,13 +35,15 @@ Hood.define('test.InputGroup.Text', {
             console.log('input_extra_focus');
             document.querySelector(`[hood-fd="${this.__fd}"] > input`).style = this._src.style.input + this._src.style.input_extra_focus;
             Hood.call(this._ownerFd, 'childInputOnFocus', {
-                ev: ev
+                ev: ev,
+                srcFd: this.__fd
             })
         },
         on_blur: function (ev) {
             document.querySelector(`[hood-fd="${this.__fd}"] > input`).style = this._src.style.input;
             Hood.call(this._ownerFd, 'childInputOnBlur', {
-                ev: ev
+                ev: ev,
+                srcFd: this.__fd
             })
         }
     }

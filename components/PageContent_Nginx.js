@@ -191,6 +191,14 @@ Hood.define('test.Content.Nginx.DetailPanel', {
             // console.log(argv.ev.target);
             // Hood.getState
             // alert()
+        },
+        childInputOnFocus: function (argv) {
+            console.log(`childInputOnFocus`);
+            console.log(argv);
+        },
+        childInputOnBlur: function (argv) {
+            console.log(`childInputOnBlur`);
+            console.log(argv);
         }
     }
 });

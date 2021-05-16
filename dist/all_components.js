@@ -71,8 +71,8 @@ Hood.define('test.Content.Tinc', {
     render: function () {
         return `<div hood-fd="${this.__fd}" style="padding: 100px 20px 0;">Not Implemented Yet</div>`;
     },
-    states: {},
-    methods: {}
+    states: { },
+    methods: { }
 });
 Hood.define('test.InputGroup.Text', {
     init: function () { },
@@ -111,13 +111,15 @@ Hood.define('test.InputGroup.Text', {
             console.log('input_extra_focus');
             document.querySelector(`[hood-fd="${this.__fd}"] > input`).style = this._src.style.input + this._src.style.input_extra_focus;
             Hood.call(this._ownerFd, 'childInputOnFocus', {
-                ev: ev
+                ev: ev,
+                srcFd: this.__fd
             })
         },
         on_blur: function (ev) {
             document.querySelector(`[hood-fd="${this.__fd}"] > input`).style = this._src.style.input;
             Hood.call(this._ownerFd, 'childInputOnBlur', {
-                ev: ev
+                ev: ev,
+                srcFd: this.__fd
             })
         }
     }
@@ -395,6 +397,14 @@ Hood.define('test.Content.Nginx.DetailPanel', {
             // console.log(argv.ev.target);
             // Hood.getState
             // alert()
+        },
+        childInputOnFocus: function (argv) {
+            console.log(`childInputOnFocus`);
+            console.log(argv);
+        },
+        childInputOnBlur: function (argv) {
+            console.log(`childInputOnBlur`);
+            console.log(argv);
         }
     }
 });
