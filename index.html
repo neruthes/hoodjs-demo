@@ -12,8 +12,6 @@
             </div>
             <div class="" id="contentArea">
             </div>
-            <div class="" id="listOfItems">
-            </div>
         </div>
         <script type="text/javascript">
         const app = {};
@@ -58,19 +56,19 @@
         </script>
         <script type="text/javascript">
         // NavBar
-        let globalNavBarData = {
+        let dashboardConfData = {
             tabs: [
                 { title:'Nginx', id:'nginx', isActive: true },
                 { title:'Tinc', id:'tinc', isActive: false }
             ]
         };
-        let globalNavBarHood = Hood.create('test.NavBar', globalNavBarData);
-        document.querySelector('#globalNavBar').innerHTML = globalNavBarHood.render();
-        
+        // let globalNavBarHood = Hood.create('test.NavBar', globalNavBarData);
+        // document.querySelector('#globalNavBar').innerHTML = globalNavBarHood.render();
         
         // Init app
-        app.setActiveTab('nginx');
-        // app.setActiveNginxInstance(2001);
+        // app.setActiveTab('nginx');
+        let dashboardMain = Hood.create('test.DashboardMain', dashboardConfData);
+        document.querySelector('#main').innerHTML = dashboardMain.render();
         </script>
     </body>
     </html>

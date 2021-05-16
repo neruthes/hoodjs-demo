@@ -48,8 +48,7 @@ Hood.define('test.NavBar', {
                     tabDefPtr.isActive = false;
                 };
             });
-            _this._rerender();
-            app.setActiveTab(_this._states.activeTab);
+            Hood.call(_this._ownerFd, '_rerender');
         }
     }
 });
@@ -57,7 +56,7 @@ Hood.define('test.NavBar', {
 Hood.define('test.NavBar.Tab', {
     init: function () { },
     render: function () {
-        return `<div hood-fd="${this.__fd}" hood-method="click" data-tab-id="${this._src.id}" style="
+        return `<div hood-fd="${this.__fd}" hood-ev="click" data-tab-id="${this._src.id}" style="
             font-family: 'JetBrains Mono NL', 'Noto Sans', sans-serif;
             box-sizing: border-box;
             font-size: 22px;
@@ -70,7 +69,7 @@ Hood.define('test.NavBar.Tab', {
     },
     states: {},
     methods: {
-        click: function (ev) {
+        on_click: function (ev) {
             let _this = this;
             Hood.call(this._ownerFd, 'tabClick', {
                 rawEvent: ev,

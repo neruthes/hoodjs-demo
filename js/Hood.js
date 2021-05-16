@@ -38,6 +38,7 @@ const Hood = {
                 };
             };
             console.error(`[ERROR] Exhausted all 99 attempts when searching attributes.`);
+            resultObj.isFalsePositive = true;
             return resultObj;
         }
     }
@@ -127,68 +128,30 @@ Hood.setSrcData = function (fd, dataKey, newValue) {
 // =================================
 // Event Handling
 // =================================
-document.body.addEventListener('click', function (e) {
-    let rawTarget = e.target;
-    // console.log(`rawTarget`);
-    // console.log(rawTarget);
-    let rawOpts = {
-        methodName: null,
-        instanceFileDescriptor: null,
-        targetPtr: e.target
-    };
-    let opts = (function (rawOpts) {
-        let targetPtr = rawOpts.targetPtr;
-        let methodName = null;
-        let instanceFileDescriptor = null;
-        for (var i = 0; i < 100; i++) {
-            if (targetPtr.getAttribute('hood-method')) {
-                methodName = targetPtr.getAttribute('hood-method');
-            };
-            if (targetPtr.getAttribute('hood-fd')) {
-                instanceFileDescriptor = targetPtr.getAttribute('hood-fd');
-            };
-            if (instanceFileDescriptor && methodName) {
-                // console.log(`DEBUG: methodName: ${methodName}; fd: ${instanceFileDescriptor}`);
-                return {
-                    methodName: methodName,
-                    instanceFileDescriptor: parseInt(instanceFileDescriptor),
-                    targetPtr: targetPtr
-                };
-            } else {
-                targetPtr = targetPtr.parentElement;
-            };
-            if (i === 99 || !targetPtr) {
-                return { isFalsePositive: true };
+Hood.internal.generateRawEventHandler = function (evName) {
+    console.log(`hello???`);
+    return function (e) {
+        console.log(`evName: ${evName}`);
+        let rawTarget = e.target;
+        console.log(`rawTarget`);
+        console.log(rawTarget);
+        let searchQuery = Hood.internal.searchUpRecursively(rawTarget, ['hood-ev']);
+        if (searchQuery.isFalsePositive) {
+            console.log(`False positive click!`);
+        } else {
+            // Can find someone with 'hood-ev' attribute in the parent chain of rawTarget
+            if (searchQuery['hood-ev'].split(' ').indexOf(evName) !== -1) {
+                // The 'evName' event should be listened
+                // Find fd recursively and call its 'on_${evName}' method
+                let resultObj = Hood.internal.searchUpRecursively(rawTarget, ['hood-fd']);
+                Hood.call(parseInt(resultObj['hood-fd']), `on_${evName}`, {
+                    ev: e
+                });
             };
         };
-    })(rawOpts);
-    if (!opts.isFalsePositive) {
-        // let self = Hood._registeredInstances[opts.instanceFileDescriptor];
-        console.log(`raw click event capture`);
-        console.log(`opts.methodName ${opts.methodName}`);
-        console.log(e);
-        Hood._registeredInstances[opts.instanceFileDescriptor][opts.methodName]({
-            ev: e
-        });
-    } else {
-        // e.preventDefault();
-        // e.stopPropagation();
     };
-});
-
-document.body.addEventListener('input', function (e) {
-    let rawTarget = e.target;
-    console.log(`rawTarget`);
-    console.log(rawTarget);
-    if (rawTarget.getAttribute('hood-ev').split(' ').indexOf('input') !== -1) {
-        // The input event should be listened
-        // Find fd recursively and call its on_input method
-        let resultObj = Hood.internal.searchUpRecursively(rawTarget, ['hood-fd']);
-        console.log('resultObj');
-        console.log(resultObj);
-        Hood.call(parseInt(resultObj['hood-fd']), 'on_input', {
-            ev: e
-        });
-    };
-});
+};
+document.body.addEventListener('input', Hood.internal.generateRawEventHandler('input'));
+document.body.addEventListener('click', Hood.internal.generateRawEventHandler('click'));
+document.body.addEventListener('focus', Hood.internal.generateRawEventHandler('focus')); // TODO: Focus events do not bubble up
 

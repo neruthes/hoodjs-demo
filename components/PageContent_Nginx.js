@@ -92,7 +92,7 @@ Hood.define('test.Content.Nginx.ListItem', {
     init: function () {
     },
     render: function () {
-        return `<div hood-fd="${this.__fd}" hood-method="click" style="
+        return `<div hood-fd="${this.__fd}" hood-ev="click" style="
             font-family: 'JetBrains Mono NL', 'Noto Sans', sans-serif;
             box-sizing: border-box;
             background: ${this._src.isActive ? '#EEE' : '#FFF'};
@@ -107,7 +107,7 @@ Hood.define('test.Content.Nginx.ListItem', {
     },
     states: {},
     methods: {
-        click: function (ev) {
+        on_click: function (ev) {
             let _this = this;
             Hood.call(this._ownerFd, 'tabClick', {
                 rawEvent: ev,
@@ -123,7 +123,8 @@ Hood.define('test.Content.Nginx.DetailPanel', {
         let commonStyles = {
             group: `margin: 0 0 15px;`,
             label: `font-size: 18px; display: inline-block; width: 130px; margin: 0 20px 0 0;`,
-            input: `font-size: 18px; padding: 4px 3px;`,
+            input: `font-size: 18px; border: 1px solid #000; border-radius: 5px; outline: none; padding: 4px 5px;`,
+            input_extra_focus: `box-shadow: rgba(0, 0, 0, 0.3) 0 0 7px 1px;`,
         }
         let inputGroupEntity_title = Hood.spawn('test.InputGroup.Text', {
             label: 'Title',

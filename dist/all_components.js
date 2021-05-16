@@ -1,13 +1,13 @@
 Hood.define('test.Button', {
     init: function () { },
     render: function () {
-        return `<button hood-fd="${this.__fd}" hood-method="click">
+        return `<button hood-fd="${this.__fd}" hood-ev="click">
             ${this._src.text}
         </button>`;
     },
     states: {},
     methods: {
-        click: function (argv) {
+        on_click: function (argv) {
             console.log(`button instance event`);
             console.log(argv.ev);
             Hood.call(this._ownerFd, this._src.on_click, {
@@ -15,6 +15,64 @@ Hood.define('test.Button', {
             });
         }
     }
+});
+Hood.define('test.DashboardMain', {
+    init: function () {
+        let _this = this;
+        _this.getNginxData();
+        _this.getTincData();
+        // NavBar
+        _this.globalNavBarFd = Hood.spawn('test.NavBar', _this._src, _this.__fd).__fd;
+        // Nginx & Tinc
+        _this.contentNginxFd = Hood.spawn('test.Content.Nginx', _this._states.nginxPageData, _this.__fd).__fd;
+        _this.contentTincFd = Hood.spawn('test.Content.Tinc', _this._states.tincPageData, _this.__fd).__fd;
+    },
+    render: function () {
+        let _this = this;
+        _this._states.activeTab = Hood.getState(_this.globalNavBarFd, 'activeTab');
+        let fdKeyName = ({
+            nginx: 'contentNginxFd',
+            tinc: 'contentTincFd',
+        })[_this._states.activeTab];
+        let contentAreaHtml = Hood.call(_this[fdKeyName], 'render');
+        return `<div hood-fd="${_this.__fd}">
+            ${Hood.call(_this.globalNavBarFd, 'render')}
+            ${contentAreaHtml}
+        </div>`;
+    },
+    states: {
+        nginxPageData: {},
+        tincPageData: {}
+    },
+    methods: {
+        getNginxData: function () {
+            this._states.nginxPageData = {
+                instances: [
+                    { title: 'GitHub', draft_title: 'GitHub', domain: 'github.com', draft_domain: 'github.com', id: 2001, isActive: true },
+                    { title: 'Amazon', draft_title: 'Amazon', domain: 'amazon.com', draft_domain: 'amazon.com', id: 2002, isActive: false },
+                    { title: 'Twitter', draft_title: 'Twitter', domain: 'twitter.com', draft_domain: 'twitter.com', id: 2003, isActive: false },
+                ]
+            };
+        },
+        getTincData: function () {
+            this._states.tincPageData = {
+                instances: [
+                    { title: 'MyVPN', draft_title: 'MyVPN', id: 2001, isActive: true }
+                ]
+            };
+        },
+        setNginxData: function () {},
+        setTincData: function () {},
+    }
+});
+
+Hood.define('test.Content.Tinc', {
+    init: function () {},
+    render: function () {
+        return `<div hood-fd="${this.__fd}" style="padding: 100px 20px 0;">Not Implemented Yet</div>`;
+    },
+    states: {},
+    methods: {}
 });
 Hood.define('test.InputGroup.Text', {
     init: function () { },
@@ -27,6 +85,8 @@ Hood.define('test.InputGroup.Text', {
                 placeholder="${_this._src.placeholder}"
                 value="${Hood.getSrcData(_this._ownerFd, _this._src.tmpValFieldName)}"
                 style="${this._src.style.input}"
+                onfocus="Hood.call(${_this.__fd}, 'on_focus')"
+                onblur="Hood.call(${_this.__fd}, 'on_blur')"
             />
         </div>`;
     },
@@ -46,6 +106,19 @@ Hood.define('test.InputGroup.Text', {
                 fd: this.__fd,
                 fieldName: this._src.fieldName
             });
+        },
+        on_focus: function (ev) {
+            console.log('input_extra_focus');
+            document.querySelector(`[hood-fd="${this.__fd}"] > input`).style = this._src.style.input + this._src.style.input_extra_focus;
+            Hood.call(this._ownerFd, 'childInputOnFocus', {
+                ev: ev
+            })
+        },
+        on_blur: function (ev) {
+            document.querySelector(`[hood-fd="${this.__fd}"] > input`).style = this._src.style.input;
+            Hood.call(this._ownerFd, 'childInputOnBlur', {
+                ev: ev
+            })
         }
     }
 });
@@ -99,8 +172,7 @@ Hood.define('test.NavBar', {
                     tabDefPtr.isActive = false;
                 };
             });
-            _this._rerender();
-            app.setActiveTab(_this._states.activeTab);
+            Hood.call(_this._ownerFd, '_rerender');
         }
     }
 });
@@ -108,7 +180,7 @@ Hood.define('test.NavBar', {
 Hood.define('test.NavBar.Tab', {
     init: function () { },
     render: function () {
-        return `<div hood-fd="${this.__fd}" hood-method="click" data-tab-id="${this._src.id}" style="
+        return `<div hood-fd="${this.__fd}" hood-ev="click" data-tab-id="${this._src.id}" style="
             font-family: 'JetBrains Mono NL', 'Noto Sans', sans-serif;
             box-sizing: border-box;
             font-size: 22px;
@@ -121,7 +193,7 @@ Hood.define('test.NavBar.Tab', {
     },
     states: {},
     methods: {
-        click: function (ev) {
+        on_click: function (ev) {
             let _this = this;
             Hood.call(this._ownerFd, 'tabClick', {
                 rawEvent: ev,
@@ -224,7 +296,7 @@ Hood.define('test.Content.Nginx.ListItem', {
     init: function () {
     },
     render: function () {
-        return `<div hood-fd="${this.__fd}" hood-method="click" style="
+        return `<div hood-fd="${this.__fd}" hood-ev="click" style="
             font-family: 'JetBrains Mono NL', 'Noto Sans', sans-serif;
             box-sizing: border-box;
             background: ${this._src.isActive ? '#EEE' : '#FFF'};
@@ -239,7 +311,7 @@ Hood.define('test.Content.Nginx.ListItem', {
     },
     states: {},
     methods: {
-        click: function (ev) {
+        on_click: function (ev) {
             let _this = this;
             Hood.call(this._ownerFd, 'tabClick', {
                 rawEvent: ev,
@@ -255,7 +327,8 @@ Hood.define('test.Content.Nginx.DetailPanel', {
         let commonStyles = {
             group: `margin: 0 0 15px;`,
             label: `font-size: 18px; display: inline-block; width: 130px; margin: 0 20px 0 0;`,
-            input: `font-size: 18px; padding: 4px 3px;`,
+            input: `font-size: 18px; border: 1px solid #000; border-radius: 5px; outline: none; padding: 4px 5px;`,
+            input_extra_focus: `box-shadow: rgba(0, 0, 0, 0.3) 0 0 7px 1px;`,
         }
         let inputGroupEntity_title = Hood.spawn('test.InputGroup.Text', {
             label: 'Title',
