@@ -55,7 +55,7 @@ Hood.define('test.NavBar', {
 Hood.define('test.NavBar.Tab', {
     init: function () { },
     render: function () {
-        return `<div hood-fd="${this.__fd}" hood-ev="click" data-tab-id="${this._src.id}" style="
+        return `<div hood-fd="${this.__fd}" hood-click="on_click" data-tab-id="${this._src.id}" style="
             font-family: 'JetBrains Mono NL', 'Noto Sans', sans-serif;
             box-sizing: border-box;
             font-size: 22px;

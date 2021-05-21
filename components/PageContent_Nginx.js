@@ -87,7 +87,7 @@ Hood.define('test.Content.Nginx.ListItem', {
     init: function () {
     },
     render: function () {
-        return `<div hood-fd="${this.__fd}" hood-ev="click" style="
+        return `<div hood-fd="${this.__fd}" hood-click="on_click" style="
             font-family: 'JetBrains Mono NL', 'Noto Sans', sans-serif;
             box-sizing: border-box;
             background: ${this._src.isActive ? '#EEE' : '#FFF'};
